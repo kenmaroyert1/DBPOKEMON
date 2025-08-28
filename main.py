@@ -1,16 +1,16 @@
-from Config.ConfigBig import Config
-from Extract.BigDataExtract import BigDataExtract
-from Transform.BigDataTransform import BigDataTransform
-from Load.BigDataLoad import BigDataLoad
+from Config.ConfigDB import ConfigDB
+from Extract.ExtractDB import ExtractDB
+from Transform.TransformDB import TransformDB
+from Load.LoadDB import LoadDB
 
 def main():
     # Extract
-    extractor = BigDataExtract(Config.INPUT_PATH)
+    extractor = ExtractDB(ConfigDB.INPUT_PATH)
     df = extractor.extract()
 
     if df is not None:
         # Transform
-        transformer = BigDataTransform(df)
+        transformer = TransformDB(df)
         df_clean = transformer.clean()
 
         # Mostrar algunos resultados
@@ -20,8 +20,8 @@ def main():
         print(df_clean.describe())
 
         # Load
-        loader = BigDataLoad(df_clean)
-        loader.to_csv(Config.OUTPUT_PATH)
+        loader = LoadDB(df_clean)
+        loader.to_csv(ConfigDB.OUTPUT_PATH)
 
 if __name__ == "__main__":
     main()
