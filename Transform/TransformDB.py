@@ -16,9 +16,9 @@ class TransformDB:
         # Eliminar duplicados
         df = df.drop_duplicates()
 
-        # Rellenar valores nulos en Type 2 con 'None'
+        # Eliminar la columna Type 2
         if "Type 2" in df.columns:
-            df["Type 2"] = df["Type 2"].fillna("None")
+            df = df.drop(columns=["Type 2"])
 
         # Asegurar que las columnas numéricas no tengan nulos
         num_cols = ["Total", "HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
