@@ -1,102 +1,156 @@
-# 📌 Proyecto ETL Universal con Python
+# � Pokémon ETL Project
 
-Este proyecto lo realicé con el objetivo de crear un **pipeline ETL (Extract, Transform, Load)** totalmente modular y universal, que pueda trabajar con cualquier archivo CSV o Excel sin importar su estructura.
+Este proyecto implementa un proceso ETL (Extract, Transform, Load) especializado para datos de Pokémon. Extrae información desde un archivo CSV, realiza transformaciones y limpieza de datos, y finalmente los carga tanto en un nuevo CSV como en una base de datos MySQL.
 
-La idea principal fue organizar el código en diferentes módulos que representen cada fase del proceso: **Extracción, Limpieza, Transformación y Carga**, además de un archivo de configuración que permite cambiar parámetros sin necesidad de modificar el código principal.
-
----
-
-## 🚀 Funcionalidades principales
-
-✅ **Extract**
-
-* Permite leer cualquier archivo `.csv` o `.xlsx`.
-* Se puede configurar la ruta del archivo desde `Config/ConfigBig.py`.
-
-✅ **Clean**
-
-* Elimina duplicados en el dataset.
-* Maneja valores nulos (`mean`, `median`, `mode` o ignorar).
-* Limpia espacios innecesarios en columnas de texto.
-* Todo esto se aplica de forma **universal a cualquier dataset**.
-
-✅ **Transform**
-
-* Normaliza todas las columnas numéricas en valores entre `0 y 1`.
-* Permite renombrar columnas de manera sencilla.
-
-✅ **Load**
-
-* Guarda los datos procesados en un nuevo archivo CSV dentro de la carpeta `output/`.
-
-✅ **main.py**
-
-* Orquesta todo el proceso ETL.
-* Se ejecuta en 4 pasos: **Extract → Clean → Transform → Load**.
-
----
-
-## 📂 Estructura del proyecto
+## 📋 Estructura del Proyecto
 
 ```
-BASEDEDATOSBIGDATA/
-│── Config/
-│   └── ConfigBig.py
-│
-│── Extract/
-│   ├── BigDataExtract.py
-│   └── Clean/
-│       └── Clean.py
-│
-│── Transform/
-│   └── BigDataTransform.py
-│
-│── Load/
-│   └── BigDataLoad.py
-│
-│── main.py
-│── Pokemon.csv        # Dataset de prueba
-│── requirements.txt
-│── README.md
+DBPOKEMON/
+├── Config/
+│   ├── __init__.py
+│   └── ConfigDB.py         # Configuración de rutas y conexión a BD
+├── Extract/
+│   ├── __init__.py
+│   └── ExtractDB.py        # Extracción de datos del CSV
+├── Transform/
+│   ├── __init__.py
+│   └── TransformDB.py      # Limpieza y transformación de datos
+├── Load/
+│   ├── __init__.py
+│   └── LoadDB.py           # Carga de datos a CSV y MySQL
+├── Test/
+│   └── Test_DataBase.py    # Pruebas de conexión a la BD
+├── output/
+│   └── Pokemon_clean.csv   # Datos limpios en formato CSV
+├── main.py                 # Script principal del ETL
+├── Pokemon.csv             # Datos originales
+├── requirements.txt        # Dependencias del proyecto
+└── .env                    # Variables de entorno
 ```
 
----
+## 🚀 Características
 
-## ⚙️ Instalación y requisitos
+### Extract (Extracción)
+- Lectura de datos desde archivo CSV
+- Validación de existencia del archivo
+- Carga en DataFrame de pandas
 
-1. Clonar este repositorio o copiar la estructura.
-2. Crear un entorno virtual (opcional pero recomendado):
+### Transform (Transformación)
+- Eliminación de duplicados
+- Limpieza de tipos de datos
+- Eliminación de columnas innecesarias
+- Manejo de valores nulos
+- Conversión de tipos de datos
 
-```bash
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-```
+### Load (Carga)
+- Exportación a CSV limpio
+- Carga en base de datos MySQL
+- Manejo automático de IDs duplicados
+- Recreación de tabla en cada ejecución
 
-3. Instalar las dependencias:
+## ⚙️ Requisitos y Configuración
 
+### Requisitos Previos
+- Python 3.x
+- MySQL Server
+- Pip (gestor de paquetes de Python)
+
+### Dependencias Python
 ```bash
 pip install -r requirements.txt
 ```
 
-📌 `requirements.txt` contiene:
-
-```txt
+Contenido de requirements.txt:
+```
 pandas
-numpy
+python-dotenv
+mysql-connector-python
 ```
 
----
+### Configuración de Base de Datos
+Crea un archivo `.env` en la raíz del proyecto con:
+```env
+DBUSER=tu_usuario
+DBPASSWORD=tu_contraseña
+DBHOST=tu_host
+DBPORT=tu_puerto
+DBDATABASE_NAME=nombre_base_datos
+```
 
-## ▶️ Uso
+## 📊 Estructura de Datos
 
-1. Coloca tu archivo `.csv` o `.xlsx` en la carpeta principal.
-2. Ajusta la ruta en `Config/ConfigBig.py` si quieres usar otro archivo distinto a `Pokemon.csv`.
-3. Ejecuta el flujo ETL:
+### Datos de Entrada (Pokemon.csv)
+Columnas del archivo original:
+- #: ID del Pokémon
+- Name: Nombre del Pokémon
+- Type 1: Tipo principal
+- Total: Estadísticas totales
+- HP: Puntos de vida
+- Attack: Ataque
+- Defense: Defensa
+- Sp. Atk: Ataque especial
+- Sp. Def: Defensa especial
+- Speed: Velocidad
+- Generation: Generación del Pokémon
+- Legendary: Indicador si es legendario
 
+### Estructura de la Base de Datos
+```sql
+CREATE TABLE pokemon (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    type_1 VARCHAR(50) NOT NULL,
+    total INT,
+    hp INT,
+    attack INT,
+    defense INT,
+    sp_atk INT,
+    sp_def INT,
+    speed INT,
+    generation INT,
+    legendary BOOLEAN
+)
+```
+
+## 🚀 Uso
+
+### Ejecutar el ETL Completo
 ```bash
 python main.py
 ```
+
+### Probar la Conexión a la Base de Datos
+```bash
+python Test/Test_DataBase.py
+```
+
+## 📝 Notas Importantes
+
+- La tabla MySQL se elimina y recrea en cada ejecución
+- Los IDs duplicados se manejan automáticamente asignando nuevos IDs (1000+)
+- Los datos limpios se guardan en `output/Pokemon_clean.csv`
+- El proceso muestra logs detallados con emojis para mejor seguimiento
+- Se realiza validación de datos en cada paso del proceso
+
+## ⚙️ Mantenimiento
+
+Para mantener el proyecto:
+1. Revisa regularmente las dependencias en requirements.txt
+2. Ejecuta las pruebas de conexión antes de cada proceso ETL
+3. Verifica los logs de salida para detectar posibles errores
+4. Mantén actualizado el archivo .env con las credenciales correctas
+
+## 👥 Contribuir
+
+1. Haz un Fork del proyecto
+2. Crea una rama para tu característica (`git checkout -b feature/AmazingFeature`)
+3. Haz commit de tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más detalles.
 
 4. El resultado se guardará automáticamente en la carpeta `output/` como `cleaned_output.csv`.
 
