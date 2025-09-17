@@ -1,6 +1,6 @@
-# � Pokémon ETL Project
+# 🎮 Proyecto ETL y Visualización de Pokémon
 
-Este proyecto implementa un proceso ETL (Extract, Transform, Load) especializado para datos de Pokémon. Extrae información desde un archivo CSV, realiza transformaciones y limpieza de datos, y finalmente los carga tanto en un nuevo CSV como en una base de datos MySQL.
+Este proyecto implementa un proceso ETL (Extract, Transform, Load) especializado para datos de Pokémon, junto con herramientas avanzadas de visualización de datos. El sistema extrae información desde un archivo CSV, realiza transformaciones y limpieza de datos, los carga tanto en un nuevo CSV como en una base de datos MySQL, y genera visualizaciones estadísticas interactivas.
 
 ## 📋 Estructura del Proyecto
 
@@ -23,9 +23,10 @@ DBPOKEMON/
 ├── output/
 │   └── Pokemon_clean.csv   # Datos limpios en formato CSV
 ├── main.py                 # Script principal del ETL
-├── Pokemon.csv             # Datos originales
-├── requirements.txt        # Dependencias del proyecto
-└── .env                    # Variables de entorno
+├── MainVisualize.py       # Script de visualización de datos
+├── Pokemon.csv            # Datos originales
+├── requirements.txt       # Dependencias del proyecto
+└── .env                  # Variables de entorno
 ```
 
 ## 🚀 Características
@@ -48,6 +49,13 @@ DBPOKEMON/
 - Manejo automático de IDs duplicados
 - Recreación de tabla en cada ejecución
 
+### Visualización
+- Análisis estadístico por generación
+- Distribución de tipos de Pokémon
+- Análisis de Pokémon legendarios
+- Mapas de calor de estadísticas
+- Gráficos interactivos y personalizables
+
 ## ⚙️ Requisitos y Configuración
 
 ### Requisitos Previos
@@ -62,9 +70,13 @@ pip install -r requirements.txt
 
 Contenido de requirements.txt:
 ```
+numpy
 pandas
+matplotlib
+seaborn
 python-dotenv
 mysql-connector-python
+python-dateutil
 ```
 
 ### Configuración de Base de Datos
@@ -77,6 +89,41 @@ DBPORT=tu_puerto
 DBDATABASE_NAME=nombre_base_datos
 ```
 
+## 📊 Visualizaciones
+
+### Gráficas Disponibles
+1. **Distribución por Generación**
+   - Muestra la cantidad de Pokémon en cada generación
+   - Incluye etiquetas con valores exactos
+   - Visualización clara de la evolución del Pokédex
+
+2. **Distribución de Tipos**
+   - Análisis de la frecuencia de cada tipo primario
+   - Análisis de tipos secundarios y combinaciones
+   - Gráfico de barras con etiquetas
+   - Identificación de tipos más comunes y combinaciones frecuentes
+
+3. **Estadísticas por Generación**
+   - Comparación de stats (HP, Ataque, Defensa, etc.)
+   - Análisis de evolución entre generaciones
+   - Tendencias en diseño de Pokémon
+
+4. **Distribución de Legendarios**
+   - Proporción de Pokémon legendarios vs normales
+   - Análisis por generación
+   - Identificación de patrones de distribución
+
+5. **Mapa de Calor de Estadísticas**
+   - Visualización de correlaciones entre tipos y stats
+   - Identificación de patrones y tendencias
+   - Análisis de fortalezas por tipo
+
+### Uso de Visualizaciones
+```bash
+python MainVisualize.py
+```
+Las visualizaciones se guardan automáticamente en la carpeta `output/`.
+
 ## 📊 Estructura de Datos
 
 ### Datos de Entrada (Pokemon.csv)
@@ -84,6 +131,7 @@ Columnas del archivo original:
 - #: ID del Pokémon
 - Name: Nombre del Pokémon
 - Type 1: Tipo principal
+- Type 2: Tipo secundario (puede ser nulo)
 - Total: Estadísticas totales
 - HP: Puntos de vida
 - Attack: Ataque
@@ -93,6 +141,11 @@ Columnas del archivo original:
 - Speed: Velocidad
 - Generation: Generación del Pokémon
 - Legendary: Indicador si es legendario
+
+Notas sobre los tipos:
+- Type 1: Todo Pokémon tiene un tipo principal
+- Type 2: Algunos Pokémon tienen un tipo secundario, otros no
+- La combinación de Type 1 y Type 2 define las fortalezas y debilidades del Pokémon
 
 ### Estructura de la Base de Datos
 ```sql
