@@ -64,6 +64,7 @@ class LoadDB:
                     id INT PRIMARY KEY,
                     name VARCHAR(100) NOT NULL,
                     type_1 VARCHAR(50) NOT NULL,
+                    type_2 VARCHAR(50),
                     total INT,
                     hp INT,
                     attack INT,
@@ -72,7 +73,8 @@ class LoadDB:
                     sp_def INT,
                     speed INT,
                     generation INT,
-                    legendary BOOLEAN
+                    legendary BOOLEAN,
+                    processed_date DATETIME
                 )
             """)
             conn.commit()
@@ -97,6 +99,7 @@ class LoadDB:
                     pokemon_id,
                     row['Name'],
                     row['Type 1'],
+                    row['Type 2'],
                     row['Total'],
                     row['HP'],
                     row['Attack'],
@@ -105,7 +108,8 @@ class LoadDB:
                     row['Sp. Def'],
                     row['Speed'],
                     row['Generation'],
-                    row['Legendary']
+                    row['Legendary'],
+                    row['ProcessedDate']
                 ))
 
                 # Insertar cuando el lote está completo o es el último registro
@@ -121,9 +125,9 @@ class LoadDB:
                                 cursor = conn.cursor()
 
                             cursor.executemany("""
-                                INSERT INTO pokemon (id, name, type_1, total, hp, attack, defense, 
-                                                  sp_atk, sp_def, speed, generation, legendary)
-                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                INSERT INTO pokemon (id, name, type_1, type_2, total, hp, attack, defense, 
+                                                  sp_atk, sp_def, speed, generation, legendary, processed_date)
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                             """, batch_data)
                             conn.commit()
                             processed_rows += len(batch_data)
